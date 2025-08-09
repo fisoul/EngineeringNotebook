@@ -13,30 +13,60 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="源文件\utilities">
+      <UniqueIdentifier>{f56c9f35-b357-48e7-8b83-75e526e44f06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\framework">
+      <UniqueIdentifier>{36f25748-17f3-4527-9b4a-2547375bacaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\motion_control">
+      <UniqueIdentifier>{807e3654-bd99-4e03-a90d-43a62bfd239c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\hardware">
+      <UniqueIdentifier>{10567d8a-b444-430d-b3bb-39cb882cb9d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\app">
+      <UniqueIdentifier>{91d7d984-afa1-423b-81bd-9e2e8da51771}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="core.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="command_line.c">
+      <Filter>源文件\utilities</Filter>
     </ClCompile>
-    <ClCompile Include="axisCtrl.c">
-      <Filter>源文件</Filter>
+    <ClCompile Include="task_scheduler.c">
+      <Filter>源文件\framework</Filter>
     </ClCompile>
     <ClCompile Include="profiler.c">
-      <Filter>源文件</Filter>
+      <Filter>源文件\motion_control</Filter>
+    </ClCompile>
+    <ClCompile Include="state_machine.c">
+      <Filter>源文件\framework</Filter>
+    </ClCompile>
+    <ClCompile Include="axis_ctrl.c">
+      <Filter>源文件\motion_control</Filter>
+    </ClCompile>
+    <ClCompile Include="core.c">
+      <Filter>源文件\framework</Filter>
     </ClCompile>
     <ClCompile Include="button.c">
-      <Filter>源文件</Filter>
+      <Filter>源文件\hardware</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="task_scheduler.h">
+      <Filter>源文件\framework</Filter>
+    </ClInclude>
     <ClInclude Include="core.h">
-      <Filter>源文件</Filter>
+      <Filter>源文件\framework</Filter>
     </ClInclude>
     <ClInclude Include="button.h">
-      <Filter>源文件</Filter>
+      <Filter>源文件\hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="example.h">
+      <Filter>源文件\app</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

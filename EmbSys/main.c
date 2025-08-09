@@ -1,74 +1,90 @@
-﻿#include <stdio.h>
+﻿// CRT
+#include <stdio.h>
 #include <stdbool.h>
-#include <time.h>
-#include <windows.h>
-#include "button.h"
+// Platform
+#include <Windows.h>
+// Project
+#include "task_scheduler.h"
+#include "example.h"
 
-bool simInput[] = { false, true, true, true, false, true, true, false, false, false };
+static int cycle_time_ms[] = { 1000, 2000, 10000 }; // Default cycle times for tasks
+
+static DWORD WINAPI task_scheduler_thread_func(LPVOID para)
+{
+	return (DWORD)task_scheduler_run((PTASK_SCHEDULER)para);
+}
 
 int main(int argc, const char* argv[])
 {
-	printf("Hello, Embedded Systems!\n");
-	struct button_t button1 = {   
-		.cObject = { .cycT = 50 }, // Example cyclic time
-		.state = 0,
-		.raw_input = false,
-		.pressed = false,
-		.p_edge = false,
-		.n_edge = false,
-		.filterTime = 100, // Example filter time
-		.timer = 0
-	};
-	button1.cObject.init = NULL; // Initialize if needed
-	button1.cObject.run = button_run;
-	int count = sizeof(simInput) / sizeof(simInput[0]);
-	int index = 0;
-	while (1)
+	for (int i = 0; i < argc; i++)
 	{
-		button1.raw_input = simInput[index];
-		button1.cObject.run(&button1);
-		printf("Button State: %d, Input: %d, Pressed: %d, P-Edge: %d, N-Edge: %d\n",
-			button1.raw_input, button1.state, button1.pressed, button1.p_edge, button1.n_edge);
-		if (++index >= count)
-		{
+		printf("argv[%d] = %s\n\n", i, argv[i]);
+	}
+	// Initialize the task scheduler with the default cycle times
+	TASK_SCHEDULER* scheduler = task_scheduler_init(sizeof(cycle_time_ms) / sizeof(cycle_time_ms[0]), cycle_time_ms);
+	// get task id=1 from the scheduler
+	TASK* task1 = task_scheduler_get_task(1);
+	TASK* task2 = task_scheduler_get_task(2);
+	TASK* task3 = task_scheduler_get_task(3);
+
+	// Create a example program
+	PROGRAM program1 = {
+		.id = 1,
+		.name = "Example Program 1",
+		.init = app_example1_init,
+		.run = app_example1_run,
+	};
+
+	PROGRAM program2 = {
+		.id = 1,
+		.name = "Example Program 2",
+		.init = app_example2_init,
+		.run = app_example2_run,
+	};
+	
+	PROGRAM program3 = {
+		.id = 1,
+		.name = "Example Program 3",
+		.init = app_example3_init,
+		.run = app_example3_run,
+	};
+
+	// add the example program to the task
+	task_add_program(task1, &program1);
+	task_add_program(task2, &program2);
+	task_add_program(task3, &program3);
+	
+	task_scheduler_info(scheduler); // Print task scheduler information
+
+	// Run the task scheduler
+	HANDLE hThread = CreateThread(
+		NULL, // Default security attributes
+		0, // Default stack size
+		(LPTHREAD_START_ROUTINE)task_scheduler_thread_func, // Thread function
+		(LPVOID)scheduler, // Parameter to thread function
+		0, // Default creation flags
+		NULL); // Receive thread identifier
+
+	if (hThread == NULL) {
+		fprintf(stderr, "创建调度器线程失败: %d\n", GetLastError());
+		return 1;
+	}
+
+	// 主线程控制台输入
+	printf("输入 q 退出调度器...\n");
+	char cmd[16];
+	while (scanf_s("%15s", cmd, (unsigned)_countof(cmd))) {
+		if (cmd[0] == 'q' || cmd[0] == 'Q') {
+			scheduler->quit = 1; // 通知调度器线程退出
 			break;
 		}
-		Sleep(50);
 	}
+
+	// 等待调度器线程结束
+	WaitForSingleObject(hThread, INFINITE);
+	CloseHandle(hThread);
+
 	return 0;
 }
 
-typedef enum {
-	STATE_INIT,
-	STATE_RUNNING,
-	STATE_ERROR
-} State;
 
-static State getDesiredState()
-{
-	// This function would typically contain logic to determine the next state
-	// For this example, we will just return STATE_RUNNING
-	return STATE_RUNNING;
-}
-
-static void runActionSM()
-{
-	
-}
-
-static void entryActionSM()
-{
-
-}
-
-static void exitActionSM()
-{
-
-}
-
-void app_run_10ms()
-{
-
-	getDesiredState();
-
-}

@@ -123,15 +123,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="axisCtrl.c" />
+    <ClCompile Include="axis_ctrl.c" />
     <ClCompile Include="button.c" />
+    <ClCompile Include="command_line.c" />
     <ClCompile Include="core.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="profiler.c" />
+    <ClCompile Include="state_machine.c" />
+    <ClCompile Include="task_scheduler.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="button.h" />
     <ClInclude Include="core.h" />
+    <ClInclude Include="example.h" />
+    <ClInclude Include="task_scheduler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
