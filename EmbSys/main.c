@@ -16,6 +16,57 @@ static DWORD WINAPI task_scheduler_thread_func(LPVOID para)
 
 int main(int argc, const char* argv[])
 {
+	int cpuInfo[4] = { 0 };
+	char brand[0x40] = { 0 };
+
+	// 获取 CPU 品牌字符串
+	__cpuid(cpuInfo, 0x80000000);
+	int nExIds = cpuInfo[0];
+	if (nExIds >= 0x80000004) {
+		__cpuid((int*)(cpuInfo), 0x80000002);
+		memcpy(brand, cpuInfo, sizeof(cpuInfo));
+		__cpuid((int*)(cpuInfo), 0x80000003);
+		memcpy(brand + 16, cpuInfo, sizeof(cpuInfo));
+		__cpuid((int*)(cpuInfo), 0x80000004);
+		memcpy(brand + 32, cpuInfo, sizeof(cpuInfo));
+		printf("CPU 型号: %s\n", brand);
+	}
+
+	HKEY hKey;
+	DWORD data = 0;
+	DWORD dataSize = sizeof(data);
+	if (RegOpenKeyExA(HKEY_LOCAL_MACHINE,
+		"HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0",
+		0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+		if (RegQueryValueExA(hKey, "~MHz", NULL, NULL, (LPBYTE)&data, &dataSize) == ERROR_SUCCESS) {
+			printf("CPU 主频: %u MHz\n", data);
+		}
+		RegCloseKey(hKey);
+	}
+
+	LARGE_INTEGER freq, start, end;
+	QueryPerformanceFrequency(&freq);      // 获取计时器频率
+
+	for (int i = 0; i < 10; i++)
+	{
+		QueryPerformanceCounter(&start);       // 记录开始时间
+
+		// 模拟一些代码执行
+		// 这里是你要计时的代码块
+		int count = 1000000;
+		for (volatile int i = 0; i < count; i++)
+		{
+
+		}
+
+		QueryPerformanceCounter(&end);         // 记录结束时间
+
+		double elapsed_ms = (double)(end.QuadPart - start.QuadPart) * 1000.0 / freq.QuadPart;
+		printf("测试%d: 循环%d次代码执行时间: %.3f ms\n\n", i, count, elapsed_ms);
+	}
+	
+
+
 	for (int i = 0; i < argc; i++)
 	{
 		printf("argv[%d] = %s\n\n", i, argv[i]);
